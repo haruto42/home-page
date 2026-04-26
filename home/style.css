@@ -84,3 +84,17 @@ body {
     height: 300px;
   }
 }
+
+.accordion {
+  margin: 10px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 6px;
+}
+
+.accordion summary {
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+}
