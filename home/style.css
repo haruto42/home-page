@@ -1,0 +1,75 @@
+/*全体部分*/
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: #e6ffe6; /* 薄い緑 */
+  font-family: sans-serif;
+  text-align: left;
+}
+
+/* ヘッダー */
+.header {
+  background-color: #eeeeee;
+  padding: 15px 20px;
+
+  display: flex;          /* 横並び */
+  align-items: center;    /* 縦位置を中央に揃える */
+  gap: 15px;              /* 要素間の間隔 */
+}
+
+/* 余計な余白を消す */
+.header h1,
+.header h3 {
+  margin: 0;
+}
+
+/*リスト部分*/
+.content {
+  padding: 20px;
+}
+
+.link-list {
+  max-width: 300px;
+  height: 500px;          /* 高さ制限 */
+  border: 1px solid #000;
+  padding: 10px;
+  background-color: #ffffff;
+
+  overflow-y: auto;       /* 縦スクロール有効 */
+}
+
+.link-list h3 {
+  margin: 10px 0 5px;
+}
+
+.link-list a {
+  display: block;            /* 縦に並べる */
+  padding: 8px;
+  margin: 3px 0;
+  text-decoration: none;
+  color: #000;
+  border-bottom: 1px solid #ccc;
+}
+
+.list-container {
+  display: flex;
+  gap: 30px;
+}
+
+.list-block {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 最後の線を消す */
+.link-list a:last-of-type {
+  border-bottom: none;
+}
+
+/* ホバー時 */
+.link-list a:hover {
+  background-color: #f0f0f0;
+}
