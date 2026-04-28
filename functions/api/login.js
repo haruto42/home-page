@@ -1,3 +1,5 @@
+import { hashPassword } from "../utils/hash.js";
+
 export async function onRequestPost(context) {
     const { request, env } = context;
 
