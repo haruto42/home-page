@@ -72,13 +72,12 @@ body {
   top: 100%;
   right: 0;
 
-  background: #eee;
+  background: #ddd;
   padding: 10px;
   border-radius: 6px;
 
   z-index: 1000;
 
-  min-width: 120px;
   white-space: nowrap;
 }
 
@@ -182,4 +181,13 @@ body {
   padding: 15px;
   margin-top: 10px;
   border-radius: 6px;
+}
+
+.user-menu {
+  position: relative;
+  display: inline-block;
+
+  /* ★ 追加：つなぎ部分 */
+  padding-bottom: 10px;
+  background: #eeeeee; /* ヘッダーと同じ色 */
 }
