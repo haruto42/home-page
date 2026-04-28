@@ -25,6 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (data.success) {
                 localStorage.setItem("user_id", data.user_id);
+                localStorage.setItem("login_state", "in"); // ★追加
+
+                document.cookie = "session=1; path=/; max-age=86400";
 
                 msg.style.color = "green";
                 msg.textContent = "ログイン成功";
@@ -37,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 msg.textContent = "ログイン失敗";
             }
 
-        } catch (err) {
+        } catch {
             msg.style.color = "red";
             msg.textContent = "通信エラー";
         }
@@ -64,8 +67,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json();
 
             if (data.success) {
-                // ★ 登録した瞬間ログイン状態にする
                 localStorage.setItem("user_id", data.user_id);
+                localStorage.setItem("login_state", "in"); // ★追加
+
+                document.cookie = "session=1; path=/; max-age=86400";
 
                 msg.style.color = "green";
                 msg.textContent = "登録成功（ログインしました）";
@@ -82,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 msg.textContent = "登録失敗";
             }
 
-        } catch (err) {
+        } catch {
             msg.style.color = "red";
             msg.textContent = "通信エラー";
         }

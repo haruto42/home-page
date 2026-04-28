@@ -1,31 +1,36 @@
-const timetable = {
-  "月": ["道徳", "国語", "社会", "体育", "理科", "技術"],
-  "火": ["理科", "美術", "数学", "音楽", "英語", "国語"],
-  "水": ["英語", "国語", "体育", "数学", "社会", "家庭科"],
-  "木": ["理科", "英語", "音楽/美術", "数学", "学活", ""],
-  "金": ["英語", "数学", "国語", "体育", "社会", "総合"]
-};
-
-const days = ["日", "月", "火", "水", "木", "金", "土"];
-
-const now = new Date();
-const weekday = days[now.getDay()];
-
-const subjects = timetable[weekday] || [];
-
-const el = document.getElementById("today-info");
-
-if (subjects.length === 0) {
-  el.textContent = `今日は${weekday}曜日（授業なし）`;
-} else {
-  el.textContent = `今日は${weekday}曜日：${subjects.join(" / ")}`;
+function hasSessionCookie() {
+  return document.cookie.split(";").some(c => c.trim().startsWith("session="));
 }
 
 window.addEventListener("DOMContentLoaded", () => {
   const userId = localStorage.getItem("user_id");
-
+  const state = localStorage.getItem("login_state");
   const loginBtn = document.querySelector(".login-btn");
 
+  // ★ ログアウト状態なら強制ログアウト
+  if (state !== "in") {
+    localStorage.removeItem("user_id");
+
+    if (loginBtn) {
+      loginBtn.textContent = "ログイン";
+      loginBtn.href = "../login/login.html";
+    }
+    return;
+  }
+
+  // ★ cookieが無い場合もログアウト
+  if (!hasSessionCookie()) {
+    localStorage.setItem("login_state", "out");
+    localStorage.removeItem("user_id");
+
+    if (loginBtn) {
+      loginBtn.textContent = "ログイン";
+      loginBtn.href = "../login/login.html";
+    }
+    return;
+  }
+
+  // ★ ログイン状態
   if (userId && loginBtn) {
     loginBtn.textContent = "UserID: " + userId;
     loginBtn.href = "#";
