@@ -10,20 +10,35 @@ body {
   text-align: left;
 }
 
-/* ===== ヘッダー ===== */
-.header {
-  background-color: #eeeeee;
-  padding: 15px 20px;
+  /* ===== ヘッダー ===== */
+  .header {
+      background-color: #eeeeee;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+  }
 
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
+  .header h1,
+  .header h3 {
+      margin: 0;
+  }
 
-.header h1,
-.header h3 {
-  margin: 0;
-}
+  /* ログインボタン */
+  .login-btn {
+      margin-left: auto;
+      padding: 8px 14px;
+      background: #ffffff;
+      border: 1px solid #000;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #000;
+      font-size: 14px;
+  }
+
+  .login-btn:hover {
+      background: #f0f0f0;
+  }
 
 /* ===== コンテンツ ===== */
 .content {
@@ -103,26 +118,26 @@ body {
   }
 }
 
-/* ===== 折りたたみ ===== */
+/* ===== 折りたたみ（外枠） ===== */
 .accordion {
-  background: #fff;
+  background: #f2f2f2; /* ほんのり灰色 */
   border: 1px solid #000;
   border-radius: 6px;
   padding: 10px;
 }
 
-/* =タイトル */
+/* =タイトル部分 */
 .accordion summary {
   cursor: pointer;
   font-size: 18px;
   font-weight: bold;
   padding: 8px;
-  background: #fff;
+  background: #f2f2f2; /* 外枠と統一 */
 }
 
 /* =中身エリア */
 .accordion .list-container {
-  background: #ffffff;
+  background: #f2f2f2; /* 中はそのまま白（または薄色でもOK） */
   padding: 15px;
   margin-top: 10px;
   border-radius: 6px;
