@@ -20,3 +20,14 @@ if (subjects.length === 0) {
 } else {
   el.textContent = `今日は${weekday}曜日：${subjects.join(" / ")}`;
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+  const userId = localStorage.getItem("user_id");
+
+  const loginBtn = document.querySelector(".login-btn");
+
+  if (userId && loginBtn) {
+    loginBtn.textContent = "UserID: " + userId;
+    loginBtn.href = "#";
+  }
+});
