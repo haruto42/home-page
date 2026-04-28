@@ -40,6 +40,27 @@ body {
       background: #f0f0f0;
   }
 
+  /* ユーザーメニュー */
+  .user-menu {
+  display: inline-block;
+  margin-left: 10px;
+  }
+
+  .user-menu summary {
+    cursor: pointer;
+    padding: 8px;
+    background: #ddd;
+    border-radius: 6px;
+  }
+
+  .user-menu-content {
+    margin-top: 5px;
+    padding: 10px;
+    background: #eee;
+    border-radius: 6px;
+  }
+
+
 /* ===== コンテンツ ===== */
 .content {
   padding: 20px;
