@@ -294,8 +294,12 @@ async function endGame() {
         worldBest = data.ranking[0];
       }
     } catch (e) {
-      console.error("ranking fetch failed", e);
+      return Response.json({
+      success: false,
+      error: e.message
+      }, { status: 500 });
     }
+    
   }
 
   // =====================
@@ -349,6 +353,7 @@ async function endGame() {
   document.getElementById("buttons").style.display = "none";
   document.getElementById("status").style.display = "none";
   document.getElementById("staff").style.display = "none";
+
 }
 
 // =====================
