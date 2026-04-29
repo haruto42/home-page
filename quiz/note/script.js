@@ -207,8 +207,10 @@ function answer(n) {
   if (n === currentNote) {
     score++;
     playCorrect(n);
+    showResultEffect(true);   // ←追加
   } else {
     playWrong();
+    showResultEffect(false);  // ←追加
   }
 
   if (questionCount >= 5) {
@@ -407,4 +409,30 @@ function playWrong() {
 
   osc.start();
   osc.stop(audioCtx.currentTime + 1.2);
+}
+
+// =====================
+// 正誤エフェクト
+// =====================
+function showResultEffect(isCorrect) {
+  const el = document.createElement("div");
+
+  el.textContent = isCorrect ? "正解！" : "不正解";
+  el.style.position = "fixed";
+  el.style.top = "50%";
+  el.style.left = "50%";
+  el.style.transform = "translate(-50%, -50%)";
+  el.style.fontSize = "48px";
+  el.style.fontWeight = "bold";
+  el.style.color = "#fff";
+  el.style.background = isCorrect ? "rgba(0,180,0,0.8)" : "rgba(200,0,0,0.8)";
+  el.style.padding = "20px 40px";
+  el.style.borderRadius = "10px";
+  el.style.zIndex = "9999";
+
+  document.body.appendChild(el);
+
+  setTimeout(() => {
+    el.remove();
+  }, 600);
 }
