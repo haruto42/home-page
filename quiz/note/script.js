@@ -19,24 +19,14 @@ const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 // =====================
 const notes = ["ド", "レ", "ミ", "ファ", "ソ", "ラ", "シ"];
 
-const noteMapTreble = {
-  "ド": 95,
-  "レ": 87,
-  "ミ": 80,
-  "ファ": 72,
-  "ソ": 65,
-  "ラ": 57,
-  "シ": 50
-};
-
-const noteMapBass = {
-  "ド": 65,
-  "レ": 57,
-  "ミ": 50,
-  "ファ": 42,
-  "ソ": 35,
-  "ラ": 27,
-  "シ": 20
+const noteIndex = {
+  "ド": 0,
+  "レ": 1,
+  "ミ": 2,
+  "ファ": 3,
+  "ソ": 4,
+  "ラ": 5,
+  "シ": 6
 };
 
 const freqMap = {
@@ -50,7 +40,101 @@ const freqMap = {
 };
 
 // =====================
-// 初期化（音声解除用）
+// 五線基準（ここが最重要）
+// =====================
+const startY = 20;
+const gap = 15;
+
+// 1線目（一番下）を基準
+const staffCenterY = startY + gap * 4;
+
+// ト音・ヘ音の基準位置
+const clefBase = {
+  treble: 2, // ドの位置
+  bass: -3   // ドの位置
+};
+
+// =====================
+// デバッグ
+// =====================
+function logNote(note, y, base) {
+  console.log(`[note] ${note} index=${noteIndex[note]} base=${base} y=${y}`);
+}
+
+// =====================
+// クッキー操作関数
+// =====================
+function setCookie(name, value, days = 365) {
+  const d = new Date();
+  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = `${name}=${value}; expires=${d.toUTCString()}; path=/`;
+}
+
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+  for (const c of cookies) {
+    const [k, v] = c.split("=");
+    if (k === name) return v;
+  }
+  return null;
+}
+
+// =====================
+// ログインチェック
+// =====================
+function isLoggedIn() {
+  return localStorage.getItem("login_state") === "in";
+}
+
+// =====================
+// ホームに戻る
+// =====================
+function goHome() {
+  location.href = "/home";
+}
+
+// =====================
+// 初期化
+// =====================
+function showGameUI() {
+  document.getElementById("result").style.display = "none";
+  document.getElementById("modeSelect").style.display = "none";
+  document.getElementById("clefSelect").style.display = "none";
+
+  const game = document.getElementById("game");
+  game.style.display = "flex";
+
+  document.getElementById("buttons").style.display = "block";
+  document.getElementById("status").style.display = "block";
+  document.getElementById("staff").style.display = "block";
+
+  // ★重要：レイアウト再適用
+  game.style.textAlign = "flex";
+}
+
+// =====================
+// モード選択に戻る
+// =====================
+function backToMenu() {
+  location.reload();
+}
+
+// =====================
+// Y計算（完全安定版）
+// =====================
+function getY(note, clefType) {
+  const index = noteIndex[note];
+  const base = clefBase[clefType];
+
+  const y = staffCenterY - (index - base) * (gap / 2);
+
+  logNote(note, y, base);
+
+  return y;
+}
+
+// =====================
+// 音声初期化
 // =====================
 document.body.addEventListener("click", () => {
   if (audioCtx.state === "suspended") {
@@ -63,7 +147,6 @@ document.body.addEventListener("click", () => {
 // =====================
 function selectMode(m) {
   mode = m;
-
   document.getElementById("modeSelect").style.display = "none";
   document.getElementById("clefSelect").style.display = "block";
 }
@@ -74,21 +157,36 @@ function selectMode(m) {
 function startGame(c) {
   clef = c;
 
-  document.getElementById("clefSelect").style.display = "none";
-  document.getElementById("game").style.display = "block";
-
   questionCount = 0;
   score = 0;
 
   startTime = performance.now();
-
   timerInterval = setInterval(updateStatus, 50);
+
+  showGameUI();
 
   nextQuestion();
 }
 
 // =====================
-// 問題生成
+// リスタート
+// =====================
+function retry() {
+  questionCount = 0;
+  score = 0;
+
+  startTime = performance.now();
+
+  clearInterval(timerInterval);
+  timerInterval = setInterval(updateStatus, 50);
+
+  showGameUI();
+
+  nextQuestion();
+}
+
+// =====================
+// 問題
 // =====================
 function nextQuestion() {
   currentNote = notes[Math.floor(Math.random() * notes.length)];
@@ -122,7 +220,7 @@ function answer(n) {
 }
 
 // =====================
-// 状態表示
+// 状態
 // =====================
 function updateStatus() {
   const time = ((performance.now() - startTime) / 1000).toFixed(2);
@@ -134,27 +232,94 @@ function updateStatus() {
 // =====================
 // 終了
 // =====================
-function endGame() {
+async function endGame() {
   clearInterval(timerInterval);
 
-  const time = ((performance.now() - startTime) / 1000).toFixed(2);
+  const time = parseFloat(((performance.now() - startTime) / 1000).toFixed(2));
 
-  alert(`終了！\n正解: ${score}/5\n時間: ${time}秒`);
+  const loggedIn = isLoggedIn();
+  const userId = localStorage.getItem("user_id");
 
-  location.reload();
+  // =====================
+  // クッキー：自己ベスト
+  // =====================
+  const bestScore = parseInt(getCookie("bestScore") || "0");
+  const bestTime = parseFloat(getCookie("bestTime") || "9999");
+
+  const isRecord =
+    score > bestScore || (score === bestScore && time < bestTime);
+
+  if (isRecord) {
+    setCookie("bestScore", score);
+    setCookie("bestTime", time);
+  }
+
+  const finalBestScore = isRecord ? score : bestScore;
+  const finalBestTime = isRecord ? time : bestTime;
+
+  // =====================
+  // ログイン時：サーバー保存
+  // =====================
+  if (loggedIn) {
+    try {
+      await fetch("/api/score/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          score,
+          time
+        })
+      });
+    } catch (e) {
+      console.error("score save failed", e);
+    }
+  }
+
+  // =====================
+  // 表示生成
+  // =====================
+  let lines = [];
+
+  lines.push(`終了！`);
+  lines.push(`正解: ${score}/5`);
+  lines.push(`時間: ${time}秒`);
+  lines.push("");
+
+  if (!loggedIn) {
+    lines.push("⚠ ログインするとランキングに登録できます");
+    lines.push(`最高記録: ${finalBestScore}問 / ${finalBestTime.toFixed(2)}秒`);
+  } else {
+    lines.push(`自己ベスト: ${finalBestScore}問 / ${finalBestTime.toFixed(2)}秒`);
+    lines.push(`世界ベスト: 読み込み中...`);
+
+    // 将来ここで ranking API を叩く
+  }
+
+  if (isRecord) {
+    lines.unshift("🏆 最高記録更新！");
+    lines.splice(1, 0, "");
+  }
+
+  // =====================
+  // UI更新
+  // =====================
+  document.getElementById("result").style.display = "block";
+  document.getElementById("resultText").innerText = lines.join("\n");
+
+  document.getElementById("buttons").style.display = "none";
+  document.getElementById("status").style.display = "none";
+  document.getElementById("staff").style.display = "none";
 }
 
 // =====================
-// 五線譜描画
+// 描画
 // =====================
 function drawStaff() {
   const canvas = document.getElementById("staff");
   const ctx = canvas.getContext("2d");
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  const startY = 20;
-  const gap = 15;
 
   // 五線
   ctx.strokeStyle = "#000";
@@ -166,7 +331,7 @@ function drawStaff() {
     ctx.stroke();
   }
 
-  // 記号（ト音 / ヘ音）
+  // 記号
   const gY = startY + gap * 2;
   ctx.fillStyle = "#000";
   ctx.font = "60px serif";
@@ -174,9 +339,7 @@ function drawStaff() {
 
   // 音符
   if (currentNote) {
-    const y = (clef === "treble")
-      ? noteMapTreble[currentNote]
-      : noteMapBass[currentNote];
+    const y = getY(currentNote, clef);
 
     ctx.fillStyle = "#000";
     ctx.beginPath();
@@ -186,7 +349,7 @@ function drawStaff() {
 }
 
 // =====================
-// 正解音（ピアノ風）
+// 正解音
 // =====================
 function playCorrect(note) {
   const osc = audioCtx.createOscillator();
@@ -206,7 +369,7 @@ function playCorrect(note) {
 }
 
 // =====================
-// 失敗音（低音ドラム風）
+// 失敗音
 // =====================
 function playWrong() {
   const osc = audioCtx.createOscillator();

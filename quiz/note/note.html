@@ -11,15 +11,26 @@
 
 <h1>楽譜クイズ</h1>
 
-<!-- モード選択 -->
+<!-- トップ画面 -->
 <div id="modeSelect">
   <button onclick="selectMode('5q')">5問モード</button>
+
+  <br>
+
+  <button onclick="goHome()">ホームに戻る</button>
 </div>
 
 <!-- 記号選択 -->
 <div id="clefSelect" style="display:none;">
   <button onclick="startGame('treble')">ト音記号</button>
   <button onclick="startGame('bass')">ヘ音記号</button>
+</div>
+
+<!-- 結果表示 -->
+<div id="result" style="display:none;">
+  <div id="resultText"></div>
+  <button onclick="retry()">もう一回</button>
+  <button onclick="backToMenu()">最初に戻る</button>
 </div>
 
 <!-- ゲーム -->

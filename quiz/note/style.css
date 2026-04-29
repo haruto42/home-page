@@ -55,3 +55,17 @@ canvas {
   max-width: 300px;
   margin: 0 auto;
 }
+
+#result {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#game {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
