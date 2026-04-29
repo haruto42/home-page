@@ -3,11 +3,10 @@ export async function onRequestPost(context) {
 
   try {
     const body = await request.json();
-    const { user_id, score, time } = body;
+    const { user_id, score, time, mode } = body;
 
-    // ===== バリデーション =====
-    if (!user_id) {
-      return Response.json({ success: false, error: "no_user" });
+    if (!user_id || !mode) {
+      return Response.json({ success: false, error: "no_user_or_mode" });
     }
 
     if (
@@ -19,20 +18,51 @@ export async function onRequestPost(context) {
       return Response.json({ success: false, error: "invalid_data" });
     }
 
-    // ===== 保存 =====
-    await env.DB.prepare(`
-      INSERT INTO scores (user_id, score, time)
-      VALUES (?, ?, ?)
+    // ★既存データ取得
+    const existing = await env.DB.prepare(`
+      SELECT score, time
+      FROM scores
+      WHERE user_id = ? AND mode = ?
     `)
-      .bind(user_id, score, time)
-      .run();
+      .bind(user_id, mode)
+      .first();
 
-    return Response.json({ success: true });
+    // ★更新判定
+    let shouldUpdate = false;
+
+    if (!existing) {
+      shouldUpdate = true;
+    } else if (
+      score > existing.score ||
+      (score === existing.score && time < existing.time)
+    ) {
+      shouldUpdate = true;
+    }
+
+    // ★更新 or 何もしない
+    if (shouldUpdate) {
+      await env.DB.prepare(`
+        INSERT INTO scores (user_id, score, time, mode)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(user_id, mode)
+        DO UPDATE SET
+          score = excluded.score,
+          time = excluded.time,
+          created_at = CURRENT_TIMESTAMP
+      `)
+        .bind(user_id, score, time, mode)
+        .run();
+    }
+
+    return Response.json({
+      success: true,
+      updated: shouldUpdate
+    });
 
   } catch (e) {
     return Response.json({
       success: false,
-      error: "server_error"
+      error: e.message
     }, { status: 500 });
   }
 }
