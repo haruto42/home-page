@@ -419,20 +419,26 @@ function showResultEffect(isCorrect) {
 
   el.textContent = isCorrect ? "正解！" : "不正解";
   el.style.position = "fixed";
-  el.style.top = "50%";
+  el.style.top = "20px";
   el.style.left = "50%";
-  el.style.transform = "translate(-50%, -50%)";
-  el.style.fontSize = "48px";
+  el.style.transform = "translateX(-50%)";
+  el.style.fontSize = "24px";
   el.style.fontWeight = "bold";
   el.style.color = "#fff";
-  el.style.background = isCorrect ? "rgba(0,180,0,0.8)" : "rgba(200,0,0,0.8)";
-  el.style.padding = "20px 40px";
-  el.style.borderRadius = "10px";
+  el.style.background = isCorrect ? "rgba(0,150,0,0.9)" : "rgba(180,0,0,0.9)";
+  el.style.padding = "8px 20px";
+  el.style.borderRadius = "20px";
   el.style.zIndex = "9999";
+  el.style.pointerEvents = "none"; // ←重要：クリック邪魔しない
 
   document.body.appendChild(el);
 
+  // 背景フラッシュ
+  const original = document.body.style.background;
+  document.body.style.background = isCorrect ? "#e8ffe8" : "#ffe8e8";
+
   setTimeout(() => {
     el.remove();
-  }, 600);
+    document.body.style.background = original;
+  }, 500);
 }
