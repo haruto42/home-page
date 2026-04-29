@@ -267,9 +267,10 @@ async function endGame() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user_id: userId,
-          score,
-          time
+            user_id: userId,
+            score,
+            time,
+            mode: "5q"
         })
       });
     } catch (e) {
