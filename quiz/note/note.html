@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>楽譜クイズ</title>
+  <link rel="stylesheet" href="./style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<h1>楽譜クイズ</h1>
+
+<!-- モード選択 -->
+<div id="modeSelect">
+  <button onclick="selectMode('5q')">5問モード</button>
+</div>
+
+<!-- 記号選択 -->
+<div id="clefSelect" style="display:none;">
+  <button onclick="startGame('treble')">ト音記号</button>
+  <button onclick="startGame('bass')">ヘ音記号</button>
+</div>
+
+<!-- ゲーム -->
+<div id="game" style="display:none;">
+
+  <div id="status"></div>
+
+  <canvas id="staff" width="300" height="120"></canvas>
+
+  <div id="buttons">
+    <button onclick="answer('ド')">ド</button>
+    <button onclick="answer('レ')">レ</button>
+    <button onclick="answer('ミ')">ミ</button>
+    <button onclick="answer('ファ')">ファ</button>
+    <button onclick="answer('ソ')">ソ</button>
+    <button onclick="answer('ラ')">ラ</button>
+    <button onclick="answer('シ')">シ</button>
+  </div>
+
+</div>
+
+<script src="./script.js"></script>
+</body>
+</html>

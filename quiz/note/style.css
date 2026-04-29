@@ -1,0 +1,57 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background: #e6ffe6;
+}
+
+button {
+  padding: 12px;
+  margin: 5px;
+  font-size: 16px;
+}
+
+#staff {
+  font-size: 40px;
+  margin: 20px;
+}body {
+  font-family: sans-serif;
+  text-align: center;
+  background: #e6ffe6;
+  margin: 0;
+}
+
+h1 {
+  margin: 10px;
+}
+
+button {
+  padding: 12px 14px;
+  margin: 5px;
+  font-size: 16px;
+  border: 1px solid #000;
+  background: #fff;
+  border-radius: 6px;
+}
+
+button:hover {
+  background: #f0f0f0;
+}
+
+#status {
+  margin: 10px;
+  font-size: 16px;
+}
+
+canvas {
+  background: #fff;
+  border: 1px solid #000;
+  margin: 10px;
+}
+
+#buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 300px;
+  margin: 0 auto;
+}
