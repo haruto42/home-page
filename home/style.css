@@ -1,4 +1,7 @@
-/* ===== 全体 ===== */
+
+/* =====================
+   ベース
+===================== */
 html, body {
   height: 100%;
   margin: 0;
@@ -10,7 +13,9 @@ body {
   text-align: left;
 }
 
-/* ===== ヘッダー ===== */
+/* =====================
+   ヘッダー
+===================== */
 .header {
   background-color: #eeeeee;
   padding: 15px 20px;
@@ -25,8 +30,7 @@ body {
   margin: 0;
 }
 
-/* ===== 右寄せエリア ===== */
-/* login or user-menu のどちらか1つだけ表示する前提 */
+/* 右側エリア（ログイン / ユーザー） */
 .login-btn,
 .user-menu {
   margin-left: auto;
@@ -47,13 +51,16 @@ body {
   background: #f0f0f0;
 }
 
-/* ===== ユーザーメニュー ===== */
+/* =====================
+   ユーザーメニュー
+===================== */
 .user-menu {
   position: relative;
   display: inline-block;
+  padding-bottom: 10px;
+  background: #eeeeee;
 }
 
-/* summary（ボタン部分） */
 .user-menu summary {
   list-style: none;
   cursor: pointer;
@@ -66,7 +73,6 @@ body {
   background: #ccc;
 }
 
-/* ドロップダウン本体 */
 .user-menu-content {
   position: absolute;
   top: 100%;
@@ -77,11 +83,9 @@ body {
   border-radius: 6px;
 
   z-index: 1000;
-
   white-space: nowrap;
 }
 
-/* detailsのデフォルト展開制御 */
 .user-menu > div {
   display: none;
 }
@@ -90,12 +94,17 @@ body {
   display: block;
 }
 
-/* ===== コンテンツ ===== */
+/* =====================
+   メインコンテンツ
+===================== */
 .content {
   padding: 20px;
+  text-align: left;
 }
 
-/* ===== 横並びレイアウト ===== */
+/* =====================
+   外部リンクレイアウト
+===================== */
 .list-container {
   display: flex;
   gap: 30px;
@@ -106,7 +115,7 @@ body {
   flex-direction: column;
 }
 
-/* ===== スクロールリスト ===== */
+/* スクロールリスト */
 .link-list {
   max-width: 300px;
   height: 500px;
@@ -115,6 +124,13 @@ body {
   background-color: #fff8cc;
   overflow-y: auto;
   border-radius: 8px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.link-list::-webkit-scrollbar {
+  display: none;
 }
 
 .link-list h3 {
@@ -138,29 +154,9 @@ body {
   background-color: #fff2a8;
 }
 
-/* スクロールバー非表示 */
-.link-list::-webkit-scrollbar {
-  display: none;
-}
-
-.link-list {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-/* ===== スマホ対応 ===== */
-@media (max-width: 767px) {
-  .list-container {
-    display: block;
-  }
-
-  .link-list {
-    max-width: 100%;
-    height: 300px;
-  }
-}
-
-/* ===== 折りたたみ ===== */
+/* =====================
+   アコーディオン
+===================== */
 .accordion {
   background: #f2f2f2;
   border: 1px solid #000;
@@ -183,11 +179,48 @@ body {
   border-radius: 6px;
 }
 
-.user-menu {
-  position: relative;
-  display: inline-block;
+/* =====================
+   ゲーム入口カード
+===================== */
+.game-entry {
+  margin: 20px 0;
+  padding: 15px;
+  border: 2px solid #000;
+  background: #f2f2f2;
+  max-width: 300px;
 
-  /* ★ 追加：つなぎ部分 */
-  padding-bottom: 10px;
-  background: #eeeeee; /* ヘッダーと同じ色 */
+  text-align: left;
+  align-self: flex-start;
+}
+
+.game-entry h2 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.game-link {
+  display: inline-block;
+  padding: 10px 15px;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.game-link:hover {
+  background: #333;
+}
+
+/* =====================
+   レスポンシブ
+===================== */
+@media (max-width: 767px) {
+  .list-container {
+    display: block;
+  }
+
+  .link-list {
+    max-width: 100%;
+    height: 300px;
+  }
 }
