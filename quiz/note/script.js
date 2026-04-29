@@ -240,9 +240,6 @@ async function endGame() {
   const loggedIn = isLoggedIn();
   const userId = localStorage.getItem("user_id");
 
-  let serverBest = null;
-  let worldBest = null;
-
   // =====================
   // クッキー（未ログイン用）
   // =====================
@@ -257,49 +254,48 @@ async function endGame() {
     setCookie("bestTime", time);
   }
 
+  let rankingHTML = "";
+
   // =====================
   // サーバー処理（ログイン時）
   // =====================
   if (loggedIn) {
-    // 保存
     try {
+      // 保存
       await fetch("/api/score/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            user_id: userId,
-            score,
-            time,
-            mode: "5q"
+          user_id: userId,
+          score,
+          time,
+          mode: "5q"
         })
       });
-    } catch (e) {
-      console.error("save failed", e);
-    }
 
-    // 自己ベスト
-    try {
-      const res = await fetch(`/api/score/me?user_id=${userId}`);
+      // ランキング取得（自分込み）
+      const res = await fetch(`/api/score/ranking?user_id=${userId}&mode=5q`);
       const data = await res.json();
-      if (data.success) serverBest = data.best;
-    } catch (e) {
-      console.error("me fetch failed", e);
-    }
 
-    // 世界ランキング
-    try {
-      const res = await fetch("/api/score/ranking");
-      const data = await res.json();
-      if (data.success && data.ranking.length > 0) {
-        worldBest = data.ranking[0];
+      if (data.success) {
+        rankingHTML += "<br><div>ランキング</div>";
+
+        data.top.forEach((r, i) => {
+          rankingHTML += `<div>${i + 1}位 ${r.name}</div>`;
+        });
+
+        if (data.myRank) {
+          rankingHTML += `
+            <br>
+            <div>あなた</div>
+            <div>${data.myRank.rank}位（${data.myRank.score}問 / ${data.myRank.time.toFixed(2)}秒）</div>
+          `;
+        }
       }
+
     } catch (e) {
-      return Response.json({
-      success: false,
-      error: e.message
-      }, { status: 500 });
+      console.error("ranking failed", e);
     }
-    
   }
 
   // =====================
@@ -318,30 +314,13 @@ async function endGame() {
     <br>
   `;
 
-  const finalBestScore = isRecord ? score : bestScore;
-  const finalBestTime = isRecord ? time : bestTime;
-
   if (!loggedIn) {
     html += `
       <div style="color:red;">⚠ ログインするとランキングに登録できます</div>
-      <div>最高記録: ${finalBestScore}問 / ${finalBestTime.toFixed(2)}秒</div>
+      <div>最高記録: ${bestScore}問 / ${bestTime.toFixed(2)}秒</div>
     `;
   } else {
-    if (serverBest) {
-      html += `
-        <div>自己ベスト: ${serverBest.score}問 / ${serverBest.time.toFixed(2)}秒</div>
-      `;
-    } else {
-      html += `<div>自己ベスト: なし</div>`;
-    }
-
-    if (worldBest) {
-      html += `
-        <div>世界ベスト: ${worldBest.name}（${worldBest.score}問 / ${worldBest.time.toFixed(2)}秒）</div>
-      `;
-    } else {
-      html += `<div>世界ベスト: なし</div>`;
-    }
+    html += rankingHTML || `<div>ランキング: 取得失敗</div>`;
   }
 
   // =====================
@@ -353,7 +332,6 @@ async function endGame() {
   document.getElementById("buttons").style.display = "none";
   document.getElementById("status").style.display = "none";
   document.getElementById("staff").style.display = "none";
-
 }
 
 // =====================
