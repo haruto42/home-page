@@ -313,10 +313,13 @@ async function endGame() {
     <br>
   `;
 
+  const finalBestScore = isRecord ? score : bestScore;
+  const finalBestTime = isRecord ? time : bestTime;
+
   if (!loggedIn) {
     html += `
       <div style="color:red;">⚠ ログインするとランキングに登録できます</div>
-      <div>最高記録: ${bestScore}問 / ${bestTime.toFixed(2)}秒</div>
+      <div>最高記録: ${finalBestScore}問 / ${finalBestTime.toFixed(2)}秒</div>
     `;
   } else {
     if (serverBest) {
@@ -345,6 +348,41 @@ async function endGame() {
   document.getElementById("buttons").style.display = "none";
   document.getElementById("status").style.display = "none";
   document.getElementById("staff").style.display = "none";
+}
+
+// =====================
+// 描画（←これが無かった）
+// =====================
+function drawStaff() {
+  const canvas = document.getElementById("staff");
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // 五線
+  ctx.strokeStyle = "#000";
+  for (let i = 0; i < 5; i++) {
+    const y = startY + i * gap;
+    ctx.beginPath();
+    ctx.moveTo(20, y);
+    ctx.lineTo(280, y);
+    ctx.stroke();
+  }
+
+  // 記号
+  const gY = startY + gap * 2;
+  ctx.fillStyle = "#000";
+  ctx.font = "60px serif";
+  ctx.fillText(clef === "treble" ? "𝄞" : "𝄢", 5, gY + 20);
+
+  // 音符
+  if (currentNote) {
+    const y = getY(currentNote, clef);
+
+    ctx.beginPath();
+    ctx.ellipse(150, y, 10, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
 
 // =====================
