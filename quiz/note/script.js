@@ -244,49 +244,6 @@ async function endGame() {
   let worldBest = null;
 
   // =====================
-  // サーバー保存
-  // =====================
-  if (loggedIn) {
-    try {
-      await fetch("/api/score/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: userId,
-          score,
-          time
-        })
-      });
-    } catch (e) {
-      console.error("save failed", e);
-    }
-
-    // =====================
-    // 自己ベスト取得
-    // =====================
-    try {
-      const res = await fetch(`/api/score/me?user_id=${userId}`);
-      const data = await res.json();
-      if (data.success) serverBest = data.best;
-    } catch (e) {
-      console.error("me fetch failed", e);
-    }
-
-    // =====================
-    // 世界ランキング取得
-    // =====================
-    try {
-      const res = await fetch("/api/score/ranking");
-      const data = await res.json();
-      if (data.success && data.ranking.length > 0) {
-        worldBest = data.ranking[0];
-      }
-    } catch (e) {
-      console.error("ranking fetch failed", e);
-    }
-  }
-
-  // =====================
   // クッキー（未ログイン用）
   // =====================
   const bestScore = parseInt(getCookie("bestScore") || "0");
@@ -301,11 +258,50 @@ async function endGame() {
   }
 
   // =====================
+  // サーバー処理（ログイン時）
+  // =====================
+  if (loggedIn) {
+    // 保存
+    try {
+      await fetch("/api/score/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          score,
+          time
+        })
+      });
+    } catch (e) {
+      console.error("save failed", e);
+    }
+
+    // 自己ベスト
+    try {
+      const res = await fetch(`/api/score/me?user_id=${userId}`);
+      const data = await res.json();
+      if (data.success) serverBest = data.best;
+    } catch (e) {
+      console.error("me fetch failed", e);
+    }
+
+    // 世界ランキング
+    try {
+      const res = await fetch("/api/score/ranking");
+      const data = await res.json();
+      if (data.success && data.ranking.length > 0) {
+        worldBest = data.ranking[0];
+      }
+    } catch (e) {
+      console.error("ranking fetch failed", e);
+    }
+  }
+
+  // =====================
   // 表示生成
   // =====================
   let html = "";
 
-  // タイトル
   if (isRecord) {
     html += `<div style="color:gold; font-weight:bold;">🏆 最高記録更新！</div><br>`;
   }
@@ -317,21 +313,12 @@ async function endGame() {
     <br>
   `;
 
-  // =====================
-  // 未ログイン
-  // =====================
   if (!loggedIn) {
     html += `
       <div style="color:red;">⚠ ログインするとランキングに登録できます</div>
       <div>最高記録: ${bestScore}問 / ${bestTime.toFixed(2)}秒</div>
     `;
-  }
-
-  // =====================
-  // ログイン済み
-  // =====================
-  else {
-    // 自己ベスト
+  } else {
     if (serverBest) {
       html += `
         <div>自己ベスト: ${serverBest.score}問 / ${serverBest.time.toFixed(2)}秒</div>
@@ -340,7 +327,6 @@ async function endGame() {
       html += `<div>自己ベスト: なし</div>`;
     }
 
-    // 世界ベスト
     if (worldBest) {
       html += `
         <div>世界ベスト: ${worldBest.name}（${worldBest.score}問 / ${worldBest.time.toFixed(2)}秒）</div>
@@ -360,41 +346,6 @@ async function endGame() {
   document.getElementById("status").style.display = "none";
   document.getElementById("staff").style.display = "none";
 }
-  // =====================
-  // クッキー：自己ベスト
-  // =====================
-  const bestScore = parseInt(getCookie("bestScore") || "0");
-  const bestTime = parseFloat(getCookie("bestTime") || "9999");
-
-  const isRecord =
-    score > bestScore || (score === bestScore && time < bestTime);
-
-  if (isRecord) {
-    setCookie("bestScore", score);
-    setCookie("bestTime", time);
-  }
-
-  const finalBestScore = isRecord ? score : bestScore;
-  const finalBestTime = isRecord ? time : bestTime;
-
-  // =====================
-  // ログイン時：サーバー保存
-  // =====================
-  if (loggedIn) {
-    try {
-      await fetch("/api/score/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: userId,
-          score,
-          time
-        })
-      });
-    } catch (e) {
-      console.error("score save failed", e);
-    }
-  }
 
   // =====================
   // 表示生成
