@@ -5,14 +5,25 @@ export async function onRequestPost(context) {
     const body = await request.json();
     const { user_id, score, time } = body;
 
+    // ===== バリデーション =====
     if (!user_id) {
       return Response.json({ success: false, error: "no_user" });
     }
 
-    await env.DB.prepare(
-      `INSERT INTO scores (user_id, score, time)
-       VALUES (?, ?, ?)`
-    )
+    if (
+      typeof score !== "number" ||
+      typeof time !== "number" ||
+      score < 0 ||
+      time <= 0
+    ) {
+      return Response.json({ success: false, error: "invalid_data" });
+    }
+
+    // ===== 保存 =====
+    await env.DB.prepare(`
+      INSERT INTO scores (user_id, score, time)
+      VALUES (?, ?, ?)
+    `)
       .bind(user_id, score, time)
       .run();
 
