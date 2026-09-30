@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WSSテスト</title>
+</head>
+<body>
+<button id="connect">接続</button>
+<input id="msg" type="text">
+<button id="send">送信</button>
+<pre id="log"></pre>
+
+<script>
+	let ws;
+	const log = document.getElementById("log");
+
+	function addLog(line) {
+		log.textContent += line + "\n";
+	}
+
+	document.getElementById("connect").addEventListener("click", () => {
+		const url = "wss://" + location.host + "/api/ws";
+		ws = new WebSocket(url);
+
+		ws.addEventListener("open", () => addLog("[open] " + url));
+		ws.addEventListener("message", (e) => addLog("[recv] " + e.data));
+		ws.addEventListener("close", () => addLog("[close]"));
+		ws.addEventListener("error", () => addLog("[error]"));
+	});
+
+	document.getElementById("send").addEventListener("click", () => {
+		const value = document.getElementById("msg").value;
+		if (ws && ws.readyState === WebSocket.OPEN) {
+			ws.send(value);
+			addLog("[send] " + value);
+		} else {
+			addLog("[warn] 未接続です");
+		}
+	});
+</script>
+</body>
+</html>
