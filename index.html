@@ -3,133 +3,137 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>学習リンク集</title>
+<title>haruto42</title>
 <style>
 	* {
 		box-sizing: border-box;
 	}
 
 	body {
-		margin: 0;
-		padding: 2rem 1rem;
-		font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
-		background: #f5f6f8;
-		color: #222;
-	}
-
-	h1 {
-		text-align: center;
-		margin: 0 0 0.5rem;
-	}
-
-	.intro {
-		text-align: center;
-		color: #555;
-		font-size: 0.9rem;
-		margin: 0 0 2rem;
-	}
-
-	.list-container {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 1.5rem;
-		max-width: 900px;
+		font-family: sans-serif;
+		max-width: 360px;
 		margin: 0 auto;
-	}
-
-	.list-block {
-		flex: 1 1 350px;
-		background: #fff;
-		border-radius: 12px;
-		padding: 1.5rem;
-		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-	}
-
-	.list-block h2 {
-		margin-top: 0;
-		font-size: 1.1rem;
-		border-bottom: 2px solid #4a90d9;
-		padding-bottom: 0.5rem;
-	}
-
-	.link-list {
+		padding: 2rem 1rem;
 		display: flex;
 		flex-direction: column;
+		gap: 0.6rem;
 	}
 
-	.link-list h3 {
-		margin: 1.25rem 0 0.5rem;
-		font-size: 0.95rem;
+	h2 {
+		font-size: 1rem;
+		margin: 1rem 0 0;
 		color: #555;
+		border-bottom: 2px solid #4a90d9;
+		padding-bottom: 0.3rem;
 	}
 
-	.link-list h3:first-child {
-		margin-top: 0;
-	}
-
-	.link-list a {
+	a.link,
+	button {
 		display: block;
-		padding: 0.5rem 0.75rem;
-		margin-bottom: 0.4rem;
-		border-radius: 8px;
+		font-size: 1rem;
+		padding: 0.8rem;
+		text-align: center;
 		text-decoration: none;
 		color: #1a4fa0;
 		background: #eef3fb;
-		transition: background 0.15s ease;
+		border: 1px solid #c9d8ee;
+		border-radius: 8px;
 	}
 
-	.link-list a:hover {
-		background: #dbe6f7;
+	input {
+		font-size: 1rem;
+		padding: 0.6rem;
+	}
+
+	.note {
+		font-size: 0.8rem;
+		color: #777;
+		margin: 0;
+	}
+
+	#out {
+		margin-top: 0.5rem;
 	}
 </style>
 </head>
 <body>
-<h1>学習リンク集</h1>
-<p class="intro">各教科・学習で使用する公式サービスへのリンクをまとめています。</p>
+<h2>ゲーム</h2>
+<a class="link" href="https://puyoteto.pages.dev">ぷよテト</a>
+<a class="link" href="https://school-escape.pages.dev">スクールエスケープ</a>
 
-<div class="list-container">
+<h2>アプリ(Apps Script経由)</h2>
+<p class="note">パスワードを入れてから押してください。</p>
+<input id="password" type="password" placeholder="パスワード">
+<button data-app="chat">chat</button>
+<button data-app="othello">オセロ</button>
+<div id="out"></div>
 
-	<!-- 左：学校ソフト -->
-	<div class="list-block">
-		<h2>学校で使用するサイト</h2>
+<script>
+(function () {
+	var ENDPOINT = "https://script.google.com/macros/s/AKfycbwL6u_n6E8waepb5sXQ-bT5E0qLkoaOv5sfpoQBURPDX7DaocyfcfN4vJ2HavEqFXbE/exec";
 
-		<div class="link-list">
-			<h3>Google系</h3>
-			<a href="https://workspace.google.com/" target="_blank" rel="noopener noreferrer">Google Workspace</a>
-			<a href="https://classroom.google.com/" target="_blank" rel="noopener noreferrer">Google Classroom</a>
-			<a href="https://mail.google.com/" target="_blank" rel="noopener noreferrer">Gmail</a>
-			<a href="https://drive.google.com/" target="_blank" rel="noopener noreferrer">Google Drive</a>
-			<a href="https://docs.google.com/" target="_blank" rel="noopener noreferrer">Google Docs</a>
-			<a href="https://sheets.google.com/" target="_blank" rel="noopener noreferrer">Google Sheets</a>
-			<a href="https://slides.google.com/" target="_blank" rel="noopener noreferrer">Google Slides</a>
-			<a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer">Google Maps</a>
-			<a href="https://chat.google.com/" target="_blank" rel="noopener noreferrer">Google Chat</a>
+	function copyText(text) {
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(text);
+			return;
+		}
+		var ta = document.createElement("textarea");
+		ta.value = text;
+		document.body.appendChild(ta);
+		ta.select();
+		try {
+			document.execCommand("copy");
+		} catch (e) {}
+		document.body.removeChild(ta);
+	}
 
-			<h3>その他教育サービス</h3>
-			<a href="https://loilonote.app/" target="_blank" rel="noopener noreferrer">ロイロノート・スクール</a>
-			<a href="https://manabipocket.ed-cl.com/" target="_blank" rel="noopener noreferrer">まなびポケット</a>
+	function loadApp(app) {
+		document.getElementById("out").textContent = app + " を読み込み中…";
 
-			<h3>ドリル系</h3>
-			<a href="https://www.drilpark.jp/" target="_blank" rel="noopener noreferrer">ドリルパーク(アクセス不可)</a>
-			<a href="https://www.testpark.jp/" target="_blank" rel="noopener noreferrer">テストパーク(アクセス不可)</a>
-		</div>
-	</div>
+		fetch(ENDPOINT, {
+			method: "POST",
+			headers: { "Content-Type": "text/plain" },
+			body: JSON.stringify({
+				action: "getApp",
+				app: app,
+				password: document.getElementById("password").value,
+			}),
+		})
+			.then((r) => r.json())
+			.then((d) => {
+				if (d.type !== "app-ok") {
+					document.getElementById("out").textContent = "エラー: " + JSON.stringify(d);
+					return;
+				}
 
-	<!-- 右：便利サイト -->
-	<div class="list-block">
-		<h2>便利サイト</h2>
+				var b = d.data.replace(/^data:.*;base64,/, "");
 
-		<div class="link-list">
-			<h3>みんなが使うであろうサイト</h3>
-			<a href="https://kakikata.maripo.org/extra/grade_checker.html" target="_blank" rel="noopener noreferrer">漢字チェッカー</a>
-			<a href="https://sushida.net/" target="_blank" rel="noopener noreferrer">寿司打</a>
+				try {
+					var u = decodeURIComponent(
+						atob(b)
+							.split("")
+							.map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+							.join("")
+					);
+					document.open();
+					document.write(u);
+					document.close();
+				} catch (e) {
+					document.getElementById("out").innerHTML = "<button id=cp>コピー</button>";
+					document.getElementById("cp").addEventListener("click", () => {
+						copyText("data:text/html;base64," + b);
+					});
+				}
+			})
+			.catch((err) => {
+				document.getElementById("out").textContent = "通信エラー: " + err;
+			});
+	}
 
-			<h3>変換ツール</h3>
-			<a href="https://www.freeconvert.com/ja/audio-converter" target="_blank" rel="noopener noreferrer">音声ファイル変換器</a>
-			<a href="https://www.imagetotext.info/ja/image-to-text" target="_blank" rel="noopener noreferrer">画像→文字変換器</a>
-		</div>
-	</div>
-
-</div>
+	document.querySelectorAll("button[data-app]").forEach((btn) => {
+		btn.addEventListener("click", () => loadApp(btn.dataset.app));
+	});
+})();
+</script>
 </body>
 </html>
